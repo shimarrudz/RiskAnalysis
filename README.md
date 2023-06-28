@@ -1,6 +1,5 @@
 Sure! Here's the README file for your GitHub repository, written in Markdown with emojis in the title:
 
-```markdown
 # 📚 Adiante Credit Risk Analysis Simulation
 
 > Adiante is a company specializing in receivables advance and aims to assist its clients in improving cash flow by allowing the anticipation of pending amounts. Your task is to develop a program that simulates Adiante's credit risk analysis procedure. The goal of this software is to simulate risk analysis based on client data, applying specific rules to determine whether a client is eligible for receivables advance based on classification levels.
@@ -39,8 +38,6 @@ Each client has the following information:
 Remember that you should generate this data randomly or define it statically in your project for analysis purposes.
 
 - Example
-
-  ```jsx
   const clients = [
     {
       name: "John Doe",
@@ -79,7 +76,6 @@ Remember that you should generate this data randomly or define it statically in 
       financialResult: "Profit"
     }
   ];
-  ```
 
 ### 📄 **Risk Evaluation**
 
