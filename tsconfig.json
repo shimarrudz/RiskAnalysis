@@ -9,5 +9,9 @@
     "strict": true,
     "strictNullChecks": true,
     "skipLibCheck": true
+  },
+  "script": {
+    "include": "src/*",
+    "exclude": "src/*"
   }
 }
