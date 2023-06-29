@@ -1,4 +1,6 @@
-import readline from 'readline';
+import readline from 'node:readline';
+import fs from 'node:fs';
+import path from 'node:path';
 
 interface Client {
   personalData: {
@@ -38,6 +40,20 @@ function promptUser(question: string): Promise<string> {
   });
 }
 
+// Função para ler o arquivo JSON
+function readJSONFile(filePath: string): any {
+  const jsonString = fs.readFileSync(filePath, 'utf-8');
+  return JSON.parse(jsonString);
+}
+
+// Função para escrever no arquivo JSON
+function writeJSONFile(filePath: string, data: any) {
+  const folderPath = 'src/jsonFiles'; // Insira o caminho da pasta desejada aqui
+  const fullPath = path.join(folderPath, filePath);
+  const jsonString = JSON.stringify(data, null, 2);
+  fs.writeFileSync(fullPath, jsonString, 'utf-8');
+}
+
 async function collectData(): Promise<Client> {
   const personalData = {
     name: await promptUser('Insira seu nome: '),
@@ -57,10 +73,10 @@ async function collectData(): Promise<Client> {
   };
 
   const financialData = {
-    criminalModel: await promptUser('Sua empresa possui algum histórico de processo criminal? (true/false): ') === 'true',
-    debtHistory: await promptUser('Sua empresa possui algum histórico de inadimplência? (true/false): ') === 'true',
     serasaCompanyScore: parseInt(await promptUser('Insira o Score do Serasa da sua empresa: ')),
-    annualRevenue: parseFloat(await promptUser('Insira a fatura anual da sua empresa: '))
+    annualRevenue: parseFloat(await promptUser('Insira a fatura anual da sua empresa: ')),
+    criminalModel: await promptUser('Sua empresa possui algum histórico de processo criminal? (true/false): ') === 'true',
+    debtHistory: await promptUser('Sua empresa possui algum histórico de inadimplência? (true/false): ') === 'true'
   };
 
   const client: Client = {
@@ -73,11 +89,13 @@ async function collectData(): Promise<Client> {
 }
 
 async function main() {
-  const client = await collectData();
-  console.log('Dados coletados: ', client);
+  let client: Client;
 
-  // Perform analysis based on the collected data
-  let eligibilityPoints = 0;
+  try {
+    client = await collectData();
+    console.log('Dados coletados:', client);
+
+    let eligibilityPoints = 0;
 
   // Analisar dados pessoais
   if (client.personalData.serasaPFScore >= 700) {
@@ -156,7 +174,17 @@ async function main() {
     eligibilityPoints
   };
 
-  console.log('Relatório da análise:', 'Nível de Elegibilidade: ', eligibilityLevel, 'Pontos de Análise: ', eligibilityPoints, report);
+  // Salvar dados do usuário em um arquivo JSON
+  writeJSONFile('user-data.json', client);
+
+  // Salvar relatório em um arquivoJSON
+  writeJSONFile('report.json', report);
+
+  console.log('Dados do usuário foram salvos em user-data.json');
+  console.log('Relatório foi salvo em report.json');
+} catch (error) {
+  console.error('Ocorreu um erro:', error);
+}
 }
 
 main();
