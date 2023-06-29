@@ -40,27 +40,27 @@ function promptUser(question: string): Promise<string> {
 
 async function collectData(): Promise<Client> {
   const personalData = {
-    name: await promptUser('Enter your name: '),
-    email: await promptUser('Enter your email: '),
-    age: parseInt(await promptUser('Enter your age: ')),
-    cpf: await promptUser('Enter your CPF: '),
-    phone: await promptUser('Enter your phone number: '),
-    serasaPFScore: parseInt(await promptUser('Enter your Serasa PF Score: '))
+    name: await promptUser('Insira seu nome: '),
+    email: await promptUser('Insira seu e-mail: '),
+    age: parseInt(await promptUser('Insira sua idade: ')),
+    cpf: await promptUser('Insira seu CPF: '),
+    phone: await promptUser('Insira seu telefone: '),
+    serasaPFScore: parseInt(await promptUser('Insira seu Score do Serasa no seu CPF: '))
   };
 
   const company = {
-    name: await promptUser('Enter your company name: '),
-    businessArea: await promptUser('Enter your business area: '),
-    cnpj: await promptUser('Enter your CNPJ: '),
-    foundationYears: parseInt(await promptUser('Enter the number of years since the company was founded: ')),
-    socialCapital: parseFloat(await promptUser('Enter your company\'s social capital: '))
+    name: await promptUser('Insira o nome da sua empresa: '),
+    businessArea: await promptUser('Insira a área do negocio: '),
+    cnpj: await promptUser('Insira o CNPJ da empresa: '),
+    foundationYears: parseInt(await promptUser('Quantos anos fazem desde que a empresa foi fundada? : ')),
+    socialCapital: parseFloat(await promptUser('Insira o capital social da sua empresa: '))
   };
 
   const financialData = {
-    criminalModel: await promptUser('Does your company have a criminal model? (true/false): ') === 'true',
-    debtHistory: await promptUser('Does your company have a debt history? (true/false): ') === 'true',
-    serasaCompanyScore: parseInt(await promptUser('Enter your Serasa Company Score: ')),
-    annualRevenue: parseFloat(await promptUser('Enter your company\'s annual revenue: '))
+    criminalModel: await promptUser('Sua empresa possui algum histórico de processo criminal? (true/false): ') === 'true',
+    debtHistory: await promptUser('Sua empresa possui algum histórico de inadimplência? (true/false): ') === 'true',
+    serasaCompanyScore: parseInt(await promptUser('Insira o Score do Serasa da sua empresa: ')),
+    annualRevenue: parseFloat(await promptUser('Insira a fatura anual da sua empresa: '))
   };
 
   const client: Client = {
@@ -74,24 +74,20 @@ async function collectData(): Promise<Client> {
 
 async function main() {
   const client = await collectData();
-  console.log('Collected data:', client);
+  console.log('Dados coletados: ', client);
 
   // Perform analysis based on the collected data
   let eligibilityPoints = 0;
 
   // Analisar dados pessoais
-  if (client.personalData.age >= 18) {
-    eligibilityPoints += 10;
-  }
-
   if (client.personalData.serasaPFScore >= 700) {
-    eligibilityPoints += 20;
+    eligibilityPoints += 30;
   } else if (client.personalData.serasaPFScore >= 501) {
-    eligibilityPoints += 15;
+    eligibilityPoints += 20;
   } else if (client.personalData.serasaPFScore >= 301) {
     eligibilityPoints += 10;
   } else {
-    eligibilityPoints += 5;
+    eligibilityPoints += 0;
   }
 
   // Analisar dados da empresa
@@ -102,31 +98,42 @@ async function main() {
   } else if (client.company.foundationYears >= 3) {
     eligibilityPoints += 5;
   } else {
-    eligibilityPoints += 3;
+    eligibilityPoints += 0;
   }
 
-  if (client.financialData.criminalModel === false) {
-    eligibilityPoints += 30;
-  }
 
-  if (client.financialData.debtHistory === false) {
-    eligibilityPoints += 30;
-  }
-
+  // Serasa empresa
   if (client.financialData.serasaCompanyScore >= 700) {
-    eligibilityPoints += 25;
+    eligibilityPoints += 30;
   } else if (client.financialData.serasaCompanyScore >= 501) {
-    eligibilityPoints += 15;
+    eligibilityPoints += 20;
   } else if (client.financialData.serasaCompanyScore >= 301) {
-    eligibilityPoints += 5;
+    eligibilityPoints +=10;
+  } else {
+    eligibilityPoints +=0;
   }
 
+
+  // Fatura anual
   if (client.financialData.annualRevenue >= 12000000) {
     eligibilityPoints += 25;
   } else if (client.financialData.annualRevenue >= 4800000) {
     eligibilityPoints += 20;
   } else if (client.financialData.annualRevenue >= 301000) {
     eligibilityPoints += 10;
+  }
+
+  // Modelo criminal e Historico de Inadimplencia
+  if (client.financialData.criminalModel === false) {
+    eligibilityPoints += 0;
+  } else if (client.financialData.criminalModel === true) {
+    eligibilityPoints = 0
+  }
+
+  if (client.financialData.debtHistory === false) {
+    eligibilityPoints += 0;
+  } else if (client.financialData.debtHistory === true) {
+    eligibilityPoints = 0
   }
 
   // Gerar relatório
@@ -149,7 +156,7 @@ async function main() {
     eligibilityPoints
   };
 
-  console.log('Analysis report:', report);
+  console.log('Relatório da análise:', 'Nível de Elegibilidade: ', eligibilityLevel, 'Pontos de Análise: ', eligibilityPoints, report);
 }
 
 main();
