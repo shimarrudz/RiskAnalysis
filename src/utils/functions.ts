@@ -1,88 +1,60 @@
-interface PersonalData {
-  name: string;
-  email: string;
-  age: number;
-  cpf: string;
-  phone: string;
-  serasaPFScore: number;
-  companyName: string;
-  businessArea: string;
-  cnpj: string;
-  foundationYears: number;
-  socialCapital: number;
-  criminalModel: boolean;
-  debtHistory: boolean;
-  serasaCompanyScore: number;
-  annualRevenue: number;
-}
-
-interface Client {
-  personalData: PersonalData;
-}
-
-
-export function analyzePersonalData(personalData: PersonalData): number {
+export function analyzePersonalData(serasaPFScore: number, foundationYears: number, serasaCompanyScore: number, annualRevenue: number, criminalModel: boolean, debtHistory: boolean): number {
   let eligibilityPoints = 0;
 
-  // Analisar dados pessoais
-  if (personalData.serasaPFScore >= 700) {
+  if (serasaPFScore >= 700) {
     eligibilityPoints += 30;
-  } else if (personalData.serasaPFScore >= 501) {
+  } else if (serasaPFScore >= 501) {
     eligibilityPoints += 20;
-  } else if (personalData.serasaPFScore >= 301) {
+  } else if (serasaPFScore >= 301) {
     eligibilityPoints += 10;
   } else {
     eligibilityPoints += 0;
   }
 
-  // Analisar dados da empresa
-  if (personalData.foundationYears >= 10) {
+  if (foundationYears >= 10) {
     eligibilityPoints += 15;
-  } else if (personalData.foundationYears >= 6) {
+  } else if (foundationYears >= 6) {
     eligibilityPoints += 10;
-  } else if (personalData.foundationYears >= 3) {
+  } else if (foundationYears >= 3) {
     eligibilityPoints += 5;
   } else {
     eligibilityPoints += 0;
   }
 
-  // Serasa empresa
-  if (personalData.serasaCompanyScore >= 700) {
+  if (serasaCompanyScore >= 700) {
     eligibilityPoints += 30;
-  } else if (personalData.serasaCompanyScore >= 501) {
+  } else if (serasaCompanyScore >= 501) {
     eligibilityPoints += 20;
-  } else if (personalData.serasaCompanyScore >= 301) {
+  } else if (serasaCompanyScore >= 301) {
     eligibilityPoints += 10;
   } else {
     eligibilityPoints += 0;
   }
 
-  // Fatura anual
-  if (personalData.annualRevenue >= 12000000) {
+  if (annualRevenue >= 12000000) {
     eligibilityPoints += 25;
-  } else if (personalData.annualRevenue >= 4800000) {
+  } else if (annualRevenue >= 4800000) {
     eligibilityPoints += 20;
-  } else if (personalData.annualRevenue >= 301000) {
+  } else if (annualRevenue >= 301000) {
     eligibilityPoints += 10;
   }
 
-  // Modelo criminal e Histórico de Inadimplência
-  if (personalData.criminalModel === false) {
+  if (!criminalModel) {
     eligibilityPoints += 0;
-  } else if (personalData.criminalModel === true) {
+  } else {
     eligibilityPoints = 0;
   }
 
-  if (personalData.debtHistory === false) {
+  if (!debtHistory) {
     eligibilityPoints += 0;
-  } else if (personalData.debtHistory === true) {
+  } else {
     eligibilityPoints = 0;
   }
 
   return eligibilityPoints;
 }
 
-export function generateReport(eligibilityPoints: number): { eligibilityLevel: string, eligibilityPoints: number } {
+/* export function generateReport(eligibilityPoints: number): { eligibilityLevel: string, eligibilityPoints: number } {
   let eligibilityLevel: string;
 
   if (eligibilityPoints <= 20) {
@@ -101,7 +73,7 @@ export function generateReport(eligibilityPoints: number): { eligibilityLevel: s
     eligibilityLevel,
     eligibilityPoints
   };
-}
+} */
 
 /* function promptUser(question: string): Promise<string> {
   const rl = readline.createInterface({
