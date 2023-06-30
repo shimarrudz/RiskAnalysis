@@ -2,22 +2,36 @@ import { Router, Request, Response } from "express";
 import db from "../DataBase/createTable";
 import { analyzePersonalData } from "../utils/functions";
 import { CreateClientDTO } from "../interfaces/interfaces";
+import {
+  validateName,
+  validateEmail,
+  validateAge,
+  validateCPF,
+  validatePhone,
+  validateSerasaPFScore,
+  validateCompanyName,
+  validateBusinessArea,
+  validateCNPJ,
+  validateFoundationYears,
+  validateSocialCapital,
+  validateSerasaCompanyScore,
+  validateAnnualRevenue,
+} from "../utils/validations";
+import { ERROR_MESSAGES } from '../utils/constants'
+
 const router = Router();
 
-
-// Rota GET para recuperar todos os clientes
 router.get("/clients", (req: Request, res: Response) => {
   db.all("SELECT * FROM clients", (err, rows) => {
     if (err) {
       console.error(err);
-      return res.status(500).json({ error: "Erro ao recuperar clientes" });
+      return res.status(500).json({ error: ERROR_MESSAGES.ERROR_RETRIEVING_ELIGIBILITY_DATA });
     }
 
     return res.status(200).json(rows);
   });
 });
 
-// Rota GET para pegar apenas o nível de elegibilidade e os pontos
 router.get("/clients/eligibility/:cpf", (req: Request, res: Response) => {
   const { cpf } = req.params;
 
@@ -29,11 +43,11 @@ router.get("/clients/eligibility/:cpf", (req: Request, res: Response) => {
         console.log(err);
         return res
           .status(500)
-          .json({ error: "Erro ao recuperar dados de elegibilidade" });
+          .json({ error: ERROR_MESSAGES.ERROR_RETRIEVING_ELIGIBILITY_DATA });
       }
 
       if (!rows) {
-        return res.status(404).json({ error: "Cliente não encontrado." });
+        return res.status(404).json({ error: ERROR_MESSAGES.ERROR_RETRIEVING_ELIGIBILITY_DATA });
       }
 
       return res.status(200).json(rows);
@@ -41,9 +55,60 @@ router.get("/clients/eligibility/:cpf", (req: Request, res: Response) => {
   );
 });
 
-// Rota POST para adicionar um cliente
 router.post("/clients", (req: Request, res: Response) => {
   const data: CreateClientDTO = req.body;
+
+  if (!validateName(data.name)) {
+    return res.status(400).json({ error: ERROR_MESSAGES.INVALID_NAME });
+  }
+
+  if (!validateEmail(data.email)) {
+    return res.status(400).json({ error: ERROR_MESSAGES.INVALID_EMAIL });
+  }
+
+  if (!validateAge(data.age)) {
+    return res.status(400).json({ error: ERROR_MESSAGES.INVALID_AGE });
+  }
+
+  if (!validateCPF(data.cpf)) {
+    return res.status(400).json({ error: ERROR_MESSAGES.INVALID_CPF });
+  }
+
+  if (!validatePhone(data.phone)) {
+    return res.status(400).json({ error: ERROR_MESSAGES.INVALID_PHONE });
+  }
+
+  if (!validateSerasaPFScore(data.serasaPFScore)) {
+    return res.status(400).json({ error: ERROR_MESSAGES.INVALID_SERASA_PF_SCORE });
+  }
+
+  if (!validateCompanyName(data.companyName)) {
+    return res.status(400).json({ error: ERROR_MESSAGES.INVALID_COMPANY_NAME });
+  }
+
+  if (!validateBusinessArea(data.businessArea)) {
+    return res.status(400).json({ error: ERROR_MESSAGES.INVALID_BUSINESS_AREA });
+  }
+
+  if (!validateCNPJ(data.cnpj)) {
+    return res.status(400).json({ error: ERROR_MESSAGES.INVALID_CNPJ });
+  }
+
+  if (!validateFoundationYears(data.foundationYears)) {
+    return res.status(400).json({ error: ERROR_MESSAGES.INVALID_FOUNDATION_YEARS });
+  }
+
+  if (!validateSocialCapital(data.socialCapital.toString())) {
+    return res.status(400).json({ error: ERROR_MESSAGES.INVALID_SOCIAL_CAPITAL });
+  }
+
+  if (!validateSerasaCompanyScore(data.serasaCompanyScore)) {
+    return res.status(400).json({ error: ERROR_MESSAGES.INVALID_SERASA_COMPANY_SCORE });
+  }
+
+  if (!validateAnnualRevenue(data.annualRevenue.toString())) {
+    return res.status(400).json({ error: ERROR_MESSAGES.INVALID_ANNUAL_REVENUE });
+  }
 
   const eligibilityPoints: number = analyzePersonalData(
     data.serasaPFScore,
@@ -102,16 +167,61 @@ router.post("/clients", (req: Request, res: Response) => {
       return res.status(500).json({ error: "Erro ao adicionar cliente" });
     }
 
-    return res
-      .status(200)
-      .json({ message: "Cliente adicionado com sucesso" });
+    return res.status(200).json({ message: "Cliente adicionado com sucesso" });
   });
 });
 
-// Rota PUT para mudar os dados de um cliente
 router.put("/clients/changeuser/:cpf", (req: Request, res: Response) => {
   const { cpf } = req.params;
   const data: CreateClientDTO = req.body;
+
+  if (!validateName(data.name)) {
+    return res.status(400).json({ error: ERROR_MESSAGES.INVALID_NAME });
+  }
+
+  if (!validateEmail(data.email)) {
+    return res.status(400).json({ error: ERROR_MESSAGES.INVALID_EMAIL });
+  }
+
+  if (!validateAge(data.age)) {
+    return res.status(400).json({ error: ERROR_MESSAGES.INVALID_AGE });
+  }
+
+  if (!validatePhone(data.phone)) {
+    return res.status(400).json({ error: ERROR_MESSAGES.INVALID_PHONE });
+  }
+
+  if (!validateSerasaPFScore(data.serasaPFScore)) {
+    return res.status(400).json({ error: ERROR_MESSAGES.INVALID_SERASA_PF_SCORE });
+  }
+
+  if (!validateCompanyName(data.companyName)) {
+    return res.status(400).json({ error: ERROR_MESSAGES.INVALID_COMPANY_NAME });
+  }
+
+  if (!validateBusinessArea(data.businessArea)) {
+    return res.status(400).json({ error: ERROR_MESSAGES.INVALID_BUSINESS_AREA });
+  }
+
+  if (!validateCNPJ(data.cnpj)) {
+    return res.status(400).json({ error: ERROR_MESSAGES.INVALID_CNPJ });
+  }
+
+  if (!validateFoundationYears(data.foundationYears)) {
+    return res.status(400).json({ error: ERROR_MESSAGES.INVALID_FOUNDATION_YEARS });
+  }
+
+  if (!validateSocialCapital(data.socialCapital.toString())) {
+    return res.status(400).json({ error: ERROR_MESSAGES.INVALID_SOCIAL_CAPITAL });
+  }
+
+  if (!validateSerasaCompanyScore(data.serasaCompanyScore)) {
+    return res.status(400).json({ error: ERROR_MESSAGES.INVALID_SERASA_COMPANY_SCORE });
+  }
+
+  if (!validateAnnualRevenue(data.annualRevenue.toString())) {
+    return res.status(400).json({ error: ERROR_MESSAGES.INVALID_ANNUAL_REVENUE });
+  }
 
   const {
     name,
@@ -170,19 +280,21 @@ router.put("/clients/changeuser/:cpf", (req: Request, res: Response) => {
   db.run(query, values, (err) => {
     if (err) {
       console.error(err);
-      return res.status(500).json({ error: "Erro ao atualizar cliente" });
+      return res.status(500).json({ error: "Erro ao adicionar cliente"  });
     }
 
-    return res
-      .status(200)
-      .json({ message: "Cliente atualizado com sucesso" });
+    return res.status(200).json({ message: "Cliente atualizado com sucesso" });
   });
 });
 
-// ROTA PATCH para mudar apenas o CNPJ do cliente
+
 router.patch("/clients/change/:cpf", (req: Request, res: Response) => {
   const { cpf } = req.params;
   const { cnpj } = req.body;
+
+  if (!validateCNPJ(cnpj)) {
+    return res.status(400).json({ error: "CNPJ inválido" });
+  }
 
   const query = "UPDATE clients SET cnpj = ? WHERE cpf = ?";
   const values = [cnpj, cpf];
@@ -190,18 +302,13 @@ router.patch("/clients/change/:cpf", (req: Request, res: Response) => {
   db.run(query, values, (err) => {
     if (err) {
       console.error(err);
-      return res
-        .status(500)
-        .json({ error: "Erro ao atualizar o CNPJ do cliente" });
+      return res.status(500).json({ error: "Erro ao atualizar o CNPJ do cliente"  });
     }
 
-    return res
-      .status(200)
-      .json({ message: "CNPJ do cliente atualizado com sucesso" });
+    return res.status(200).json({ message: "CNPJ do cliente atualizado com sucesso" });
   });
 });
 
-// Rota DELETE para excluir um cliente pelo email
 router.delete("/clients/email/:email", (req: Request, res: Response) => {
   const { email } = req.params;
 
@@ -211,14 +318,13 @@ router.delete("/clients/email/:email", (req: Request, res: Response) => {
   db.run(query, values, (err) => {
     if (err) {
       console.error(err);
-      return res.status(500).json({ error: "Erro ao excluir cliente" });
+      return res.status(500).json({ error: "Erro ao excluir cliente"  });
     }
 
     return res.status(200).json({ message: "Cliente excluído com sucesso" });
   });
 });
 
-// Rota DELETE para excluir todos os clientes
 router.delete("/clients", (req: Request, res: Response) => {
   const query = "DELETE FROM clients";
 
@@ -233,5 +339,6 @@ router.delete("/clients", (req: Request, res: Response) => {
       .json({ message: "Todos os clientes foram excluídos com sucesso" });
   });
 });
+
 
 export default router;
