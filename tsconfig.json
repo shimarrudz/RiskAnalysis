@@ -11,7 +11,7 @@
     "skipLibCheck": true
   },
   "script": {
-    "include": "src/**/*",
-    "exclude": "src/**/*"
+    "include": "src/**/**",
+    "exclude": "src/**/**"
   }
 }

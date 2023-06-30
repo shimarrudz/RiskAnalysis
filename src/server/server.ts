@@ -1,5 +1,4 @@
 import express from 'express';
-//import router from '../routes/apiRoutes'
 import GetRoutes from '../routes/getClients';
 import PostRoutes from '../routes/postClient';
 import UpdateRoutes from '../routes/updateClient';

@@ -1,7 +1,6 @@
 import { Router, Request, Response } from "express";
 import db from "../DataBase/createTable";
-import { analyzePersonalData } from "../utils/functions";
-import { CreateClientDTO } from "../interfaces/interfaces";
+import { CreateClientDTO } from "../interfaces/client";
 import {
   validateName,
   validateEmail,
