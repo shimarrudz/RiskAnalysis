@@ -59,7 +59,7 @@ function calculateEligibilityPoints(serasaPFScore: number, foundationYears: numb
   return eligibilityPoints;
 }
 
-function clampEligibilityPoints(eligibilityPoints: number): number {
+export function clampEligibilityPoints(eligibilityPoints: number): number {
   if (eligibilityPoints > 100) {
     return 100;
   }
