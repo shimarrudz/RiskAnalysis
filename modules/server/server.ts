@@ -1,8 +1,8 @@
 import express from 'express';
-import GetRoutes from '../Controller/getClientsController';
-import PostRoutes from '../Controller/createClientController';
-import UpdateRoutes from '../Controller/updateClientController';
-import DeleteRoutes from '../Controller/deleteClientController';
+import GetRoutes from '../controller/getClientsController';
+import PostRoutes from '../controller/createClientController';
+import UpdateRoutes from '../controller/updateClientController';
+import DeleteRoutes from '../controller/deleteClientController';
 
 const app = express();
 const PORT = 3000;
