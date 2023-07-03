@@ -1,12 +1,11 @@
 import { Router, Request, Response } from "express";
+
 import db from "../../Repository/createTable";
-import { analyzePersonalData } from "../utils/functions";
 import { CreateClientDTO } from "../interfaces/client";
 import {
   validateName,
   validateEmail,
   validateAge,
-  validateCPF,
   validatePhone,
   validateSerasaPFScore,
   validateCompanyName,
@@ -19,9 +18,10 @@ import {
 } from "../services/validations";
 import { ERROR_MESSAGES } from '../utils/constants'
 
-const PostRoutes = Router();
+const UpdateRoutes = Router();
 
-PostRoutes.post("/clients", (req: Request, res: Response) => {
+UpdateRoutes.put("/clients/changeuser/:cpf", (req: Request, res: Response) => {
+    const { cpf } = req.params;
     const data: CreateClientDTO = req.body;
   
     if (!validateName(data.name)) {
@@ -34,10 +34,6 @@ PostRoutes.post("/clients", (req: Request, res: Response) => {
   
     if (!validateAge(data.age)) {
       return res.status(400).json({ error: ERROR_MESSAGES.INVALID_AGE });
-    }
-  
-    if (!validateCPF(data.cpf)) {
-      return res.status(400).json({ error: ERROR_MESSAGES.INVALID_CPF });
     }
   
     if (!validatePhone(data.phone)) {
@@ -76,65 +72,90 @@ PostRoutes.post("/clients", (req: Request, res: Response) => {
       return res.status(400).json({ error: ERROR_MESSAGES.INVALID_ANNUAL_REVENUE });
     }
   
-    const eligibilityPoints: number = analyzePersonalData(
-      data.serasaPFScore,
-      data.foundationYears,
-      data.serasaCompanyScore,
-      data.annualRevenue,
-      data.criminalModel,
-      data.debtHistory
-    );
-  
-    let eligibilityLevel: string;
-    if (eligibilityPoints <= 20) {
-      eligibilityLevel = "Bronze - Inapto para operar";
-    } else if (eligibilityPoints <= 40) {
-      eligibilityLevel = "Prata - Baixo";
-    } else if (eligibilityPoints <= 60) {
-      eligibilityLevel = "Ouro - Médio";
-    } else if (eligibilityPoints <= 80) {
-      eligibilityLevel = "Platina - Alto";
-    } else {
-      eligibilityLevel = "Azul - Totalmente Apto";
-    }
+    const {
+      name,
+      email,
+      age,
+      phone,
+      serasaPFScore,
+      companyName,
+      businessArea,
+      cnpj,
+      foundationYears,
+      socialCapital,
+      serasaCompanyScore,
+      annualRevenue,
+      criminalModel,
+      debtHistory,
+    } = data;
   
     const query = `
-      INSERT INTO clients (
-        name, email, age, cpf, phone, serasaPFScore, companyName,
-        businessArea, cnpj, foundationYears, socialCapital, serasaCompanyScore,
-        annualRevenue, criminalModel, debtHistory, eligibilityLevel, eligibilityPoints
-      )
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      UPDATE clients SET
+        name = ?,
+        email = ?,
+        age = ?,
+        phone = ?,
+        serasaPFScore = ?,
+        companyName = ?,
+        businessArea = ?,
+        cnpj = ?,
+        foundationYears = ?,
+        socialCapital = ?,
+        serasaCompanyScore = ?,
+        annualRevenue = ?,
+        criminalModel = ?,
+        debtHistory = ?
+      WHERE cpf = ?
     `;
   
     const values = [
-      data.name,
-      data.email,
-      data.age,
-      data.cpf,
-      data.phone,
-      data.serasaPFScore,
-      data.companyName,
-      data.businessArea,
-      data.cnpj,
-      data.foundationYears,
-      data.socialCapital,
-      data.serasaCompanyScore,
-      data.annualRevenue,
-      data.criminalModel,
-      data.debtHistory,
-      eligibilityLevel,
-      eligibilityPoints,
+      name,
+      email,
+      age,
+      phone,
+      serasaPFScore,
+      companyName,
+      businessArea,
+      cnpj,
+      foundationYears,
+      socialCapital,
+      serasaCompanyScore,
+      annualRevenue,
+      criminalModel,
+      debtHistory,
+      cpf,
     ];
   
     db.run(query, values, (err) => {
       if (err) {
         console.error(err);
-        return res.status(500).json({ error: "Erro ao adicionar cliente" });
+        return res.status(500).json({ error: "Erro ao adicionar cliente"  });
       }
   
-      return res.status(200).json({ message: "Cliente adicionado com sucesso" });
+      return res.status(200).json({ message: "Cliente atualizado com sucesso" });
     });
   });
   
-export default PostRoutes;
+  
+  UpdateRoutes.patch("/clients/change/:cpf", (req: Request, res: Response) => {
+    const { cpf } = req.params;
+    const { cnpj } = req.body;
+  
+    if (!validateCNPJ(cnpj)) {
+      return res.status(400).json({ error: "CNPJ inválido" });
+    }
+  
+    const query = "UPDATE clients SET cnpj = ? WHERE cpf = ?";
+    const values = [cnpj, cpf];
+  
+    db.run(query, values, (err) => {
+      if (err) {
+        console.error(err);
+        return res.status(500).json({ error: "Erro ao atualizar o CNPJ do cliente"  });
+      }
+  
+      return res.status(200).json({ message: "CNPJ do cliente atualizado com sucesso" });
+    });
+  });
+  
+export default UpdateRoutes;
