@@ -1,4 +1,5 @@
 import express from 'express';
+
 import GetRoutes from '../controller/getClientsController';
 import PostRoutes from '../controller/createClientController';
 import UpdateRoutes from '../controller/updateClientController';
@@ -8,7 +9,6 @@ const app = express();
 const PORT = 3000;
 
 app.use(express.json());
-//app.use(router);
 app.use(GetRoutes);
 app.use(PostRoutes);
 app.use(UpdateRoutes);

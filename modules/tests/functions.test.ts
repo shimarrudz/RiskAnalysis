@@ -1,7 +1,7 @@
-import { analyzePersonalData, clampEligibilityPoints } from "../utils/functions";
+import { analyzePersonalData, clampEligibilityPoints } from "../services/functions";
 
-describe('Tests for analyzePersonalData function', () => {
-  test('should be able to calculate eligibility points correctly', () => {
+describe('AnalyzePersonalData function', () => {
+  it('should be able to calculate eligibility points correctly', () => {
     const serasaPFScore = 600;
     const foundationYears = 5;
     const serasaCompanyScore = 600;
@@ -22,9 +22,24 @@ describe('Tests for analyzePersonalData function', () => {
   });
 
 describe('Testing clamp eligibility points', () => {  
-  test('should be able to clamp eligibility points to 100', () => {
+  it('should be able to clamp eligibility points to 100', () => {
     const eligibilityPoints = clampEligibilityPoints(120);
     expect(eligibilityPoints).toBe(100);
   });
 });
+
+describe('Clamp Eligibility Points function', () => {
+  it('should be able to clamp eligibility points to 100', () => {
+    const eligibilityPoints = clampEligibilityPoints(120);
+    expect(eligibilityPoints).toBe(100);
+  });
+
+  it('should not be able to clamp eligibility points if below or equal to 100', () => {
+    const eligibilityPoints = clampEligibilityPoints(80);
+    expect(eligibilityPoints).toBe(80);
+  });
 });
+
+});
+
+

@@ -1,7 +1,7 @@
 import { Router, Request, Response } from "express";
 
-import db from "../../Repository/createTable";
-import { analyzePersonalData } from "../utils/functions";
+import db from "../Repository/createTable";
+import { analyzePersonalData } from "../services/functions";
 import { CreateClientDTO } from "../interfaces/client";
 import {
   validateName,
@@ -77,7 +77,7 @@ PostRoutes.post("/clients", (req: Request, res: Response) => {
       return res.status(400).json({ error: ERROR_MESSAGES.INVALID_ANNUAL_REVENUE });
     }
   
-    const eligibilityPoints: number = analyzePersonalData(
+    let eligibilityPoints: number = analyzePersonalData(
       data.serasaPFScore,
       data.foundationYears,
       data.serasaCompanyScore,
@@ -85,20 +85,22 @@ PostRoutes.post("/clients", (req: Request, res: Response) => {
       data.criminalModel,
       data.debtHistory
     );
-  
-    let eligibilityLevel: string;
-    if (eligibilityPoints <= 20) {
-      eligibilityLevel = "Bronze - Inapto para operar";
-    } else if (eligibilityPoints <= 40) {
-      eligibilityLevel = "Prata - Baixo";
-    } else if (eligibilityPoints <= 60) {
-      eligibilityLevel = "Ouro - Médio";
-    } else if (eligibilityPoints <= 80) {
-      eligibilityLevel = "Platina - Alto";
-    } else {
-      eligibilityLevel = "Azul - Totalmente Apto";
+    
+    const eligibilityLevels: { [key: string]: string } = {
+      "20": "Bronze - Inapto para operar",
+      "40": "Prata - Baixo",
+      "60": "Ouro - Médio",
+      "80": "Platina - Alto",
+    };
+    
+    let eligibilityLevel = "Azul - Totalmente Apto";
+    for (const points in eligibilityLevels) {
+      if (eligibilityPoints <= Number(points)) {
+        eligibilityLevel = eligibilityLevels[points];
+        break;
+      }
     }
-  
+    
     const query = `
       INSERT INTO clients (
         name, email, age, cpf, phone, serasaPFScore, companyName,

@@ -1,6 +1,6 @@
 import { Router, Request, Response } from "express";
 
-import db from "../../Repository/createTable";
+import db from "../Repository/createTable";
 import { CreateClientDTO } from "../interfaces/client";
 import {
   validateName,

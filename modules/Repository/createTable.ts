@@ -1,6 +1,6 @@
 import * as sqlite3 from 'sqlite3';
 
-const db = new sqlite3.Database('./Repository/database.db');
+const db = new sqlite3.Database('./database.db');
 
 db.run(`
     CREATE TABLE IF NOT EXISTS clients (

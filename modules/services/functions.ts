@@ -1,4 +1,3 @@
-// Aplicando métodos de Use Case.
 export function analyzePersonalData(serasaPFScore: number, foundationYears: number, serasaCompanyScore: number, annualRevenue: number, criminalModel: boolean, debtHistory: boolean): number {
   try {
     const eligibilityPoints = calculateEligibilityPoints(serasaPFScore, foundationYears, serasaCompanyScore, annualRevenue, criminalModel, debtHistory);
